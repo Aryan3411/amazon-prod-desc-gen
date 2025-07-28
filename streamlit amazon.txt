@@ -1,0 +1,90 @@
+streamlit
+requests
+beautifulsoup4
+
+--------------------------------------------------------------------
+
+import streamlit as st
+import requests
+
+API_BASE = "https://5ac14b850005.ngrok-free.app"  # your deployed API URL
+
+st.set_page_config(page_title="Product Search", layout="wide")
+st.title("🛍️ Amazon & Flipkart Product Search")
+
+tab1, tab2, tab3 = st.tabs(["🔶 Amazon", "🔷 Flipkart", "🧭 Amazon (RapidAPI)"])
+
+# ===== Amazon Tab =====
+with tab1:
+    st.subheader("Search on Amazon")
+    amazon_query = st.text_input("Enter search term for Amazon", key="amazon")
+    if st.button("Search Amazon"):
+        if amazon_query.strip() == "":
+            st.warning("Please enter a search term.")
+        else:
+            with st.spinner("Searching Amazon..."):
+                try:
+                    response = requests.get(f"{API_BASE}/search/amazon", params={"query": amazon_query})
+                    response.raise_for_status()
+                    data = response.json()
+                    products = data.get("products", [])
+                    total = data.get("total_found", 0)
+
+                    st.success(f"✅ Found {total} products.")
+                    for i, product in enumerate(products, 1):
+                        st.markdown(f"### {i}. [{product['title']}]({product['url']})")
+                        st.write(f"💰 Price: {product['price']}  | ⭐ Rating: {product['rating']}")
+                        st.markdown("---")
+
+                except Exception as e:
+                    st.error(f"❌ Error: {e}")
+
+# ===== Flipkart Tab =====
+with tab2:
+    st.subheader("Search on Flipkart")
+    flipkart_query = st.text_input("Enter search term for Flipkart", key="flipkart")
+    if st.button("Search Flipkart"):
+        if flipkart_query.strip() == "":
+            st.warning("Please enter a search term.")
+        else:
+            with st.spinner("Searching Flipkart..."):
+                try:
+                    response = requests.get(f"{API_BASE}/search/flipkart", params={"query": flipkart_query})
+                    response.raise_for_status()
+                    data = response.json()
+                    products = data.get("products", [])
+                    total = data.get("total_found", 0)
+
+                    st.success(f"✅ Found {total} products.")
+                    for i, product in enumerate(products, 1):
+                        st.markdown(f"### {i}. [{product['title']}]({product['url']})")
+                        st.write(f"💰 Price: {product['price']}  | ⭐ Rating: {product['rating']}")
+                        st.markdown("---")
+
+                except Exception as e:
+                    st.error(f"❌ Error: {e}")
+
+# ===== Amazon via RapidAPI Tab =====
+with tab3:
+    st.subheader("Search on Amazon (via RapidAPI)")
+    rapid_query = st.text_input("Enter search term for Amazon (RapidAPI)", key="rapidapi")
+    if st.button("Search Amazon via RapidAPI"):
+        if rapid_query.strip() == "":
+            st.warning("Please enter a search term.")
+        else:
+            with st.spinner("Searching Amazon via RapidAPI..."):
+                try:
+                    response = requests.get(f"{API_BASE}/search/amazon/rapidapi", params={"query": rapid_query})
+                    response.raise_for_status()
+                    data = response.json()
+                    products = data.get("products", [])
+                    total = data.get("total_found", 0)
+
+                    st.success(f"✅ Found {total} products.")
+                    for i, product in enumerate(products, 1):
+                        st.markdown(f"### {i}. [{product['title']}]({product['url']})")
+                        st.write(f"💰 Price: {product['price']}  | ⭐ Rating: {product['rating']}")
+                        st.markdown("---")
+
+                except Exception as e:
+                    st.error(f"❌ Error: {e}")
